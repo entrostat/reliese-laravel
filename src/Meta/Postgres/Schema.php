@@ -134,7 +134,8 @@ class Schema implements \Reliese\Meta\Schema
         $sql = '
         SELECT child.attname, p.contype, p.conname,
             parent_class.relname as parent_table,
-            parent.attname as parent_attname
+            parent.attname as parent_attname,
+            parent_ns.nspname as parent_schema
         FROM pg_attribute child
             JOIN pg_class child_class ON child_class.oid = child.attrelid
             LEFT JOIN pg_constraint p ON p.conrelid = child_class.oid
@@ -142,6 +143,7 @@ class Schema implements \Reliese\Meta\Schema
             LEFT JOIN pg_attribute parent on parent.attnum = ANY (p.confkey)
                 AND parent.attrelid = p.confrelid
             LEFT JOIN pg_class parent_class on parent_class.oid = p.confrelid
+            LEFT JOIN pg_namespace parent_ns ON parent_class.relnamespace = parent_ns.oid
         WHERE child_class.relkind = \'r\'::char
             AND child_class.relname = \''.$blueprint->table().'\'
             AND child.attnum > 0

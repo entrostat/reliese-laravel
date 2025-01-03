@@ -148,6 +148,7 @@ class Schema implements \Reliese\Meta\Schema
             AND child_class.relname = \''.$blueprint->table().'\'
             AND child.attnum > 0
             AND contype IS NOT NULL
+            AND parent_ns.nspname = \'' . $this->schema_database . '\'
         ORDER BY child.attnum
         ;';
         $relations = $this->arraify($this->connection->select($sql));
